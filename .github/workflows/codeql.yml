@@ -1,15 +1,7 @@
----
 name: "CodeQL"
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - master
-  pull_request:
-  schedule:
-    - cron: '53 3 * * 0'
-
 jobs:
   analyzeJava:
     name: AnalyzeJava
@@ -42,6 +34,8 @@ jobs:
         with:
           category: "/language:java-kotlin"
 
+    strategy:
+      fail-fast: false
   analyzeActions:
     name: AnalyzeActions
     runs-on: 'ubuntu-latest'
@@ -63,4 +57,3 @@ jobs:
         uses: github/codeql-action/analyze@v4
         with:
           category: "/language:actions"
-...
