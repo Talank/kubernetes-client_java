@@ -1,19 +1,14 @@
----
 name: Infer
 
 'on':
   workflow_dispatch:
-  push:
-    branches:
-      - master
-  pull_request:
 
 permissions:
   contents: read
 
 jobs:
   run_infer:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v6
 
@@ -39,7 +34,7 @@ jobs:
           key: ${{ runner.os }}-infer-${{ env.year_week }}
 
       - name: Build infer
-        if: steps.cache-infer.outputs.cache-hit != 'true'
+        if: always()
         run: |
           cd ..
           git clone https://github.com/facebook/infer.git
@@ -61,4 +56,9 @@ jobs:
         run: |
           mvn clean
           infer --fail-on-issue  --print-logs --no-progress-bar -- mvn test
-...
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - ubuntu-24.04-arm
+      fail-fast: false

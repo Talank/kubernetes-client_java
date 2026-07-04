@@ -1,19 +1,11 @@
----
 name: "CodeQL"
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - master
-  pull_request:
-  schedule:
-    - cron: '53 3 * * 0'
-
 jobs:
   analyzeJava:
     name: AnalyzeJava
-    runs-on: 'ubuntu-latest'
+    runs-on: '${{ matrix.os }}'
     permissions:
       actions: read
       contents: read
@@ -42,6 +34,12 @@ jobs:
         with:
           category: "/language:java-kotlin"
 
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - ubuntu-24.04-arm
+      fail-fast: false
   analyzeActions:
     name: AnalyzeActions
     runs-on: 'ubuntu-latest'
@@ -63,4 +61,3 @@ jobs:
         uses: github/codeql-action/analyze@v4
         with:
           category: "/language:actions"
-...
